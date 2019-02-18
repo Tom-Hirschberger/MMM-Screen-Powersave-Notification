@@ -2,6 +2,9 @@ Module.register("MMM-Screen-Powersave-Notification", {
 
     defaults: {
         delay: 10000,
+        screenOnCommand: "/usr/bin/vcgencmd display_power 1",
+        screenOffCommand: "/usr/bin/vcgencmd display_power 0",
+        screenStatusCommand: "/usr/bin/vcgencmd display_power",
     },
 
     start: function () {

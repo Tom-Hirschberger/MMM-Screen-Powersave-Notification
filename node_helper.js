@@ -1,4 +1,4 @@
-const exec = require('child_process').exec;
+const execSync = require('child_process').execSync;
 const fs = require('fs');
 const callbackDir = __dirname + "/callbackScripts";
 
@@ -6,19 +6,19 @@ module.exports = NodeHelper.create({
 
     start: function () {
         this.started = false;
-        this.screenState = false;
         this.forcedDown = false;
     },
 
     isScreenOn: function(){
-        return this.screenState;
-        // exec("/usr/bin/vcgencmd display_power").stdout.on('data', function(data) {
-        //     if (data.indexOf("display_power=0") === 0) {
-        //         return false;
-        //     } else {
-        //         return true;
-        //     }
-        // });
+        if (this.config.screenStatusCommand != ""){
+            result = execSync(this.config.screenStatusCommand);
+            if (result.indexOf("display_power=0") === 0){
+                return false;
+            } else {
+                return true;
+            }
+        } 
+        return false;
     },
 
     turnScreenOff: function(forced){
@@ -30,7 +30,9 @@ module.exports = NodeHelper.create({
             console.log("Turn screen off!");
             this.forcedDown = false;
         }
-        self.screenState = false;
+        if (self.config.screenOffCommand != ""){
+            execSync(self.config.screenOffCommand);
+        }
         self.runScriptsInDirectory(callbackDir+"/off");
     },
 
@@ -38,13 +40,17 @@ module.exports = NodeHelper.create({
         const self = this;
         if(forced == true){
             console.log("Turn screen on (forced)!");
-            self.screenState = true;
+            if (self.config.screenOnCommand != ""){
+                execSync(self.config.screenOnCommand);
+            }
             this.forcedDown = false;
             self.runScriptsInDirectory(callbackDir+"/on");
         } else {
             if(this.forcedDown == false){
                 console.log("Turn screen on!");
-                self.screenState = true;
+                if (self.config.screenOnCommand != ""){
+                    execSync(self.config.screenOnCommand);
+                }
                 self.runScriptsInDirectory(callbackDir+"/on");
             } else {
                 console.log("Screen is forced off and will not be turned on!");
@@ -54,6 +60,7 @@ module.exports = NodeHelper.create({
 
     toggleScreen: function(forced){
         const self = this;
+        console.log("isScreenOn: "+self.isScreenOn());
         if (self.isScreenOn() == true){
             self.turnScreenOff(forced);
         } else {
