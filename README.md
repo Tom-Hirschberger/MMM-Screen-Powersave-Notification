@@ -16,7 +16,7 @@ To display the module insert it in the config.js file. Here is an example:
 {
     module: 'MMM-Screen-Powersave-Notification',
     config: {
-        delay: 10000,
+        delay: 60,
     }
 }
 ```
@@ -25,4 +25,7 @@ To display the module insert it in the config.js file. Here is an example:
 
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
-| delay | time before the mirror turns off the display if no user activity is detected. (in ms) | Integer | 10000 (10 seconds) |
+| delay | time before the mirror turns off the display if no user activity is detected. (in seconds) | Integer | 60 |
+| screenOnCommand | the command which is used to turn the screen on | String | '/usr/bin/vcgencmd display_power 1' |
+| screenOffCommand | the command which is used to turn the screen off | String | '/usr/bin/vcgencmd display_power 0' |
+| screenStatusCommand | the command which is used to check if the screen is on (result needs to be 'display_power 1' if on) | String | '/usr/bin/vcgencmd display_power' |
