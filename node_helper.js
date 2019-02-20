@@ -131,7 +131,9 @@ module.exports = NodeHelper.create({
       self.clearAndSetScreenTimeout(true)
       self.started = true
     } else if (notification === 'USER_PRESENCE') {
-      self.clearAndSetScreenTimeout(true)
+      if (payload && payload === true){
+        self.clearAndSetScreenTimeout(true)
+      }      
     } else if (notification === 'SCREEN_TOGGLE') {
       var forced = payload.forced === true ? payload.forced : false
       self.clearAndSetScreenTimeout(self.toggleScreen(forced))
