@@ -4,22 +4,22 @@ MMM-Screen-Powersave-Notification is a module for the [MagicMirror](https://gith
 It uses notifications to check for user presence or forced on and offs of the screen. After a configurated time without user presence the display will turn off. Additionaly scripts can be run after the screen turned of or on.
 
 ## Installation
-cd ~/MagicMirror/modules
-git clone 
-cd MMM-Screen-Powersave-Notification
-npm install
-```
+    cd ~/MagicMirror/modules
+    git clone 
+    cd MMM-Screen-Powersave-Notification
+    npm install
+
 
 ## Configuration
 To display the module insert it in the config.js file. Here is an example:
-```
-{
-    module: 'MMM-Screen-Powersave-Notification',
-    config: {
-        delay: 60,
+
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+        }
     }
-}
-```
+
 
 <br>
 
