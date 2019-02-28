@@ -16,7 +16,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
   },
 
   start: function () {
-    Log.info(this.name + ' is started')
+    Log.info("Starting module: " + this.name);
     this.sendSocketNotification('CONFIG', this.config)
   },
 
