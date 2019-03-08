@@ -32,8 +32,8 @@ To display the module insert it in the config.js file. Here is an example:
 | screenStatusCommand | the command which is used to check if the screen is on (result needs to be 'display_power 1' if on) | String | '/usr/bin/vcgencmd display_power' |
 
 ## Notifications
-| Notification | Payload | Default | Result
-| ------------ | ------- | ------ | 
+| Notification | Payload | Default | Result |
+| ------------ | ------- | ------- | ------ |
 | USER_PRESENCE | true (mandatory) |  | the timeout to turn of the screen will be reseted
 | SCREEN_OFF | forced=true or false | false | turns the screen off; if the forced option is set to true also if the screen was turned on forced
 | SCREEN_ON | forced=true or false | false | turns the screen on; if the forced option is set to true also if the screen was turned off forced
