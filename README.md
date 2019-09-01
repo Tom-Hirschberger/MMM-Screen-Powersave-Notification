@@ -6,7 +6,7 @@ It uses notifications to check for user presence or forced on and offs of the sc
 ## Installation
 ```sh
     cd ~/MagicMirror/modules
-    git clone git@github.com:Tom-Hirschberger/MMM-Screen-Powersave-Notification.git
+    git clone https://github.com/Tom-Hirschberger/MMM-Screen-Powersave-Notification.git
     cd MMM-Screen-Powersave-Notification
     npm install
 ```
