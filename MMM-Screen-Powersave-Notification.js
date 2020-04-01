@@ -19,4 +19,15 @@ Module.register('MMM-Screen-Powersave-Notification', {
     Log.info("Starting module: " + this.name);
     this.sendSocketNotification('CONFIG', this.config)
   },
+
+  notificationReceived: function (notification, payload) {
+    if (
+      (notification === 'USER_PRESENCE') ||
+            (notification === 'SCREEN_TOGGLE') ||
+            (notification === 'SCREEN_ON') ||
+            (notification === 'SCREEN_OFF') ||
+            (notification === 'SCREEN_POWERSAVE')
+    ) {
+      this.sendSocketNotification(notification, payload)
+    }
 })
