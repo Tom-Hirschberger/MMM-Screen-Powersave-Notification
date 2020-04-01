@@ -22,12 +22,13 @@ Module.register('MMM-Screen-Powersave-Notification', {
 
   notificationReceived: function (notification, payload) {
     if (
-      (notification === 'USER_PRESENCE') ||
-            (notification === 'SCREEN_TOGGLE') ||
-            (notification === 'SCREEN_ON') ||
-            (notification === 'SCREEN_OFF') ||
-            (notification === 'SCREEN_POWERSAVE')
+       (notification === 'USER_PRESENCE') ||
+       (notification === 'SCREEN_TOGGLE') ||
+       (notification === 'SCREEN_ON') ||
+       (notification === 'SCREEN_OFF') ||
+       (notification === 'SCREEN_POWERSAVE')
     ) {
       this.sendSocketNotification(notification, payload)
     }
+  }
 })
