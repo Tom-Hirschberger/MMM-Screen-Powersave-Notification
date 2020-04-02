@@ -10,6 +10,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
 
   defaults: {
     delay: 60,
+    profiles: {},
     screenOnCommand: '/usr/bin/vcgencmd display_power 1',
     screenOffCommand: '/usr/bin/vcgencmd display_power 0',
     screenStatusCommand: '/usr/bin/vcgencmd display_power'
@@ -23,6 +24,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
   notificationReceived: function (notification, payload) {
     if (
        (notification === 'USER_PRESENCE') ||
+       (notification === 'CHANGED_PROFILE') ||
        (notification === 'SCREEN_TOGGLE') ||
        (notification === 'SCREEN_ON') ||
        (notification === 'SCREEN_OFF') ||

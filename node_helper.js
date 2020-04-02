@@ -16,6 +16,8 @@ module.exports = NodeHelper.create({
   start: function () {
     this.started = false
     this.forcedDown = false
+    this.currentProfile = ''
+    this.currentProfilePattern = new RegExp('.*')
   },
 
   isScreenOn: function () {
@@ -113,12 +115,22 @@ module.exports = NodeHelper.create({
     if ( self.deactivateMonitorTimeout ){
       clearTimeout(self.deactivateMonitorTimeout)
     }
-    if ((reset === true) && (self.config.delay > 0)) {
+
+    var currentDelay = self.config.delay
+
+    for (var curConfigProfileString in self.config.profiles){
+      console.log("Checking delay of: "+curConfigProfileString + " current Profile: "+self.currentProfile)
+      if(self.currentProfilePattern.test(curConfigProfileString)){
+        currentDelay = self.config.profiles[curConfigProfileString]
+      }
+    }
+
+    if ((reset === true) && (currentDelay > 0)) {
       self.deactivateMonitorTimeout = setTimeout(function () {
         self.turnScreenOff(false)
         self.clearAndSetScreenTimeout(false)
-      }, self.config.delay * 1000)
-      console.log(this.name + ': Resetted screen timeout to ' + self.config.delay + ' seconds!')
+      }, currentDelay * 1000)
+      console.log(this.name + ': Resetted screen timeout to ' + currentDelay + ' seconds!')
     } else {
       console.log(this.name + ': Disabled screen timeout!')
     }
@@ -152,6 +164,13 @@ module.exports = NodeHelper.create({
         self.config.delay = 0
       }
       self.clearAndSetScreenTimeout(true)
+    } else if (notification === 'CHANGED_PROFILE'){
+      if(typeof payload.to !== 'undefined'){
+        self.currentProfile = payload.to
+        self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
+
+        self.clearAndSetScreenTimeout(true);
+      }
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
     }
