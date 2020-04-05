@@ -13,7 +13,8 @@ Module.register('MMM-Screen-Powersave-Notification', {
     profiles: {},
     screenOnCommand: '/usr/bin/vcgencmd display_power 1',
     screenOffCommand: '/usr/bin/vcgencmd display_power 0',
-    screenStatusCommand: '/usr/bin/vcgencmd display_power'
+    screenStatusCommand: '/usr/bin/vcgencmd display_power',
+    turnScreenOnIfProfileDelayIsSet: true
   },
 
   start: function () {

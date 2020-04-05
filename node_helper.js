@@ -110,7 +110,7 @@ module.exports = NodeHelper.create({
     })
   },
 
-  clearAndSetScreenTimeout: function (reset) {
+  clearAndSetScreenTimeout: function (reset, profileChange=false) {
     const self = this
     if ( self.deactivateMonitorTimeout ){
       clearTimeout(self.deactivateMonitorTimeout)
@@ -119,9 +119,11 @@ module.exports = NodeHelper.create({
     var currentDelay = self.config.delay
 
     for (var curConfigProfileString in self.config.profiles){
-      console.log("Checking delay of: "+curConfigProfileString + " current Profile: "+self.currentProfile)
       if(self.currentProfilePattern.test(curConfigProfileString)){
         currentDelay = self.config.profiles[curConfigProfileString]
+        if(profileChange && self.config.turnScreenOnIfProfileDelayIsSet){
+          self.turnScreenOn(false)
+        }
       }
     }
 
@@ -169,7 +171,7 @@ module.exports = NodeHelper.create({
         self.currentProfile = payload.to
         self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
 
-        self.clearAndSetScreenTimeout(true);
+        self.clearAndSetScreenTimeout(true, profileChange=true);
       }
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
