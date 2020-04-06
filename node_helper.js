@@ -133,8 +133,10 @@ module.exports = NodeHelper.create({
         self.clearAndSetScreenTimeout(false)
       }, currentDelay * 1000)
       console.log(this.name + ': Resetted screen timeout to ' + currentDelay + ' seconds!')
+      self.sendSocketNotification("SCREEN_TIMEOUT_CHANGED", {delay: currentDelay})
     } else {
       console.log(this.name + ': Disabled screen timeout!')
+      self.sendSocketNotification("SCREEN_TIMEOUT_CHANGED", {delay: 0})
     }
   },
 
@@ -171,7 +173,9 @@ module.exports = NodeHelper.create({
         self.currentProfile = payload.to
         self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
 
-        self.clearAndSetScreenTimeout(true, profileChange=true);
+        if(self.config.profiles){
+          self.clearAndSetScreenTimeout(true, profileChange=true);
+        }
       }
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
