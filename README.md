@@ -4,6 +4,8 @@ MMM-Screen-Powersave-Notification is a module for the [MagicMirror](https://gith
 It uses notifications to check for user presence or forced on and offs of the screen. After a configurated time without user presence the display will turn off. Additionaly scripts can be run after the screen turned of or on.
 If you like you can specify different delays for different profiles. The "normal" delay is used if no specific delay for a profile is configured.
 
+As of version  0.0.4 it is also possible to only hide/show the modules for users that use a display that does not support turn off/on commands.
+
 ## Installation
 ```sh
     cd ~/MagicMirror/modules
