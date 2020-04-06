@@ -92,8 +92,10 @@ Module.register('MMM-Screen-Powersave-Notification', {
   },
 
   hideModules: function(){
+    const self = this
     self.hiddenModules = []
     var allModules = MM.getModules()
+    self.sendNotification("DISABLE_PROFILE_TIMERS")
     allModules.enumerate(function(curModule){
       var callback = function(){}
       var options = {lockString: self.identifier}
@@ -103,6 +105,8 @@ Module.register('MMM-Screen-Powersave-Notification', {
   },
 
   showModules: function(){
+    const self = this
+    self.sendNotification("REENABLE_PROFILE_TIMERS")
     if(self.hiddenModules){
       for(var curModule in self.hiddenModules){
         var callback = function(){}
