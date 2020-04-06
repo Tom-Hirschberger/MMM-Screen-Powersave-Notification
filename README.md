@@ -35,7 +35,12 @@ To display the module insert it in the config.js file. Here is an example:
 | screenOnCommand | the command which is used to turn the screen on | String | '/usr/bin/vcgencmd display_power 1' |
 | screenOffCommand | the command which is used to turn the screen off | String | '/usr/bin/vcgencmd display_power 0' |
 | screenStatusCommand | the command which is used to check if the screen is on (result needs to be 'display_power 1' if on) | String | '/usr/bin/vcgencmd display_power' |
-| turnScreenOnIfProfileDelayIsSet | if you do not want the screen to be turned on if the profile changes and a profile specific delay is set set this value to false | boolean | true
+| turnScreenOnIfProfileDelayIsSet | if you do not want the screen to be turned on if the profile changes and a profile specific delay is set set this value to false | boolean | true |
+| countDownText | If you specify a position for the module in the config an countdown will be displayed; the countdown starts with an text that you can change with this value | String | 'Display powersave: ' |
+| disabledText | If the display powersave is disabled an message instead of the counter will be display | String | 'disabled' |
+| displayHours | If you use such long powersave intervals that you need hours you can set this value to true | boolean | false |
+| countDownUpdateInterval | How often should the counter be updated | Integer | 5000 |
+| animationSpeed | If you like the update of the counter to be animated you can specify an interval with this value | Integer | 0 |
 
 ## Notifications
 | Notification | Payload | Default | Result |

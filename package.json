@@ -4,7 +4,8 @@
   "description": "",
   "main": "MMM-Screen-Powersave-Notification.js",
   "dependencies": {
-    "child_process": "latest"
+    "child_process": "latest",
+    "moment": "latest"
   },
   "devDependencies": {},
   "scripts": {

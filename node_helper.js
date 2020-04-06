@@ -173,7 +173,7 @@ module.exports = NodeHelper.create({
         self.currentProfile = payload.to
         self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
 
-        if(self.config.profiles){
+        if(self.config.profiles && (Object.keys(self.config.profiles).length > 0)){
           self.clearAndSetScreenTimeout(true, profileChange=true);
         }
       }
