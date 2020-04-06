@@ -18,19 +18,28 @@ module.exports = NodeHelper.create({
     this.forcedDown = false
     this.currentProfile = ''
     this.currentProfilePattern = new RegExp('.*')
+    this.modulesHidden  = false
   },
 
   isScreenOn: function () {
-    const self = this
-    if (self.config.screenStatusCommand !== '') {
-      var result = execSync(this.config.screenStatusCommand)
-      if (result.indexOf('display_power=0') === 0) {
+    if(this.config.hideInsteadShutoff){
+      if(this.modulesHidden){
         return false
       } else {
         return true
       }
+    } else {
+      const self = this
+      if (self.config.screenStatusCommand !== '') {
+        var result = execSync(this.config.screenStatusCommand)
+        if (result.indexOf('display_power=0') === 0) {
+          return false
+        } else {
+          return true
+        }
+      }
+      return false
     }
-    return false
   },
 
   turnScreenOff: function (forced) {
@@ -43,8 +52,13 @@ module.exports = NodeHelper.create({
         console.log(this.name + ': Turning screen off!')
         self.forcedDown = false
       }
-      if (self.config.screenOffCommand !== '') {
-        execSync(self.config.screenOffCommand)
+      if(self.config.hideInsteadShutoff){
+        self.sendSocketNotification("SCREEN_HIDE_MODULES")
+        this.modulesHidden = true
+      } else {
+        if (self.config.screenOffCommand !== '') {
+          execSync(self.config.screenOffCommand)
+        }
       }
       self.runScriptsInDirectory(callbackDir + '/off')
     } else {
@@ -59,16 +73,26 @@ module.exports = NodeHelper.create({
     if ( self.isScreenOn() === false ){
       if (forced === true) {
         console.log(this.name + ': Turning screen on (forced)!')
-        if (self.config.screenOnCommand !== '') {
-          execSync(self.config.screenOnCommand)
+        if(self.config.hideInsteadShutoff){
+          self.sendSocketNotification("SCREEN_SHOW_MODULES")
+          this.modulesHidden = false
+        } else {
+          if (self.config.screenOnCommand !== '') {
+            execSync(self.config.screenOnCommand)
+          }
         }
         self.forcedDown = false
         self.runScriptsInDirectory(callbackDir + '/on')
       } else {
         if (self.forcedDown === false) {
           console.log(this.name + ': Turning screen on!')
-          if (self.config.screenOnCommand !== '') {
-            execSync(self.config.screenOnCommand)
+          if(self.config.hideInsteadShutoff){
+            self.sendSocketNotification("SCREEN_SHOW_MODULES")
+            this.modulesHidden = false
+          } else {
+            if (self.config.screenOnCommand !== '') {
+              execSync(self.config.screenOnCommand)
+            }
           }
           self.runScriptsInDirectory(callbackDir + '/on')
         } else {
@@ -146,6 +170,8 @@ module.exports = NodeHelper.create({
       self.config = payload
       self.clearAndSetScreenTimeout(true)
       self.started = true
+    } else if (notification === 'SCREEN_MODULES_HIDDEN'){
+      this.hiddenModules = payload
     } else if (notification === 'USER_PRESENCE') {
       if (payload && payload === true){
         self.clearAndSetScreenTimeout(true)

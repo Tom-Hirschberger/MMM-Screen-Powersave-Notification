@@ -19,7 +19,9 @@ Module.register('MMM-Screen-Powersave-Notification', {
     disabledText: 'disabled',
     countDownUpdateInterval: 5000,
     displayHours: false,
-    animationSpeed : 0
+    animationSpeed : 0,
+    hideInsteadShutoff: false,
+    hideAnimationSpeed: 500,
   },
 
   getStyles: function() {
@@ -86,6 +88,29 @@ Module.register('MMM-Screen-Powersave-Notification', {
     this.sendSocketNotification('CONFIG', this.config)
     this.currentDelay = this.config.delay
     this.delayDisabled = false
+    this.hiddenModules = null
+  },
+
+  hideModules: function(){
+    self.hiddenModules = []
+    var allModules = MM.getModules()
+    allModules.enumerate(function(curModule){
+      var callback = function(){}
+      var options = {lockString: self.identifier}
+      self.hiddenModules.push(curModule)
+      curModule.hide(self.config.hideAnimationSpeed,callback,options)
+    })
+  },
+
+  showModules: function(){
+    if(self.hiddenModules){
+      for(var curModule in self.hiddenModules){
+        var callback = function(){}
+        var options = {lockString:self.identifier}
+        self.hiddenModules[curModule].show(self.config.hideAnimationSpeed, callback, options)
+      }
+      self.hiddenModules = null
+    }
   },
 
   socketNotificationReceived: function (notification, payload) {
@@ -98,6 +123,10 @@ Module.register('MMM-Screen-Powersave-Notification', {
         this.delayDisabled = false
       }
       this.updateDom()
+    } else if (notification === 'SCREEN_HIDE_MODULES'){
+      self.hideModules()
+    } else if (notification === 'SCREEN_SHOW_MODULES'){
+      self.showModules()
     }
   },
 
