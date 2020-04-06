@@ -131,6 +131,11 @@ Module.register('MMM-Screen-Powersave-Notification', {
       self.hideModules()
     } else if (notification === 'SCREEN_SHOW_MODULES'){
       self.showModules()
+    } else if (
+        (notification === 'SCREENSAVE_ENABLED') ||
+        (notification === 'SCREENSAVE_DISABLED')
+    ){
+      this.sendNotification(notification,payload)
     }
   },
 

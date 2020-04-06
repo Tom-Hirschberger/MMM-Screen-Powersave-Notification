@@ -46,7 +46,7 @@ To display the module insert it in the config.js file. Here is an example:
 | hideInsteadShutoff | If you use an display that can not be turned off and on with the pi you can hide the modules only instead. Turning this option to true will do so | boolean | false |
 | hideAnimationSpeed | The hiding and reappearing off the modules will be animated with this speed | Integer | 500 |
 
-## Notifications
+## Received Notifications
 | Notification | Payload | Default | Result |
 | ------------ | ------- | ------- | ------ |
 | USER_PRESENCE | true (mandatory) |  | the timeout to turn of the screen will be reseted |
@@ -54,4 +54,10 @@ To display the module insert it in the config.js file. Here is an example:
 | SCREEN_ON | forced=true or false | false | turns the screen on; if the forced option is set to true also if the screen was turned off forced |
 | SCREEN_TOGGLE | forced=true or false | false | switches the state of the screen; the forced option will be used for on off like in SCREEN_ON or SCREEN_OFF |
 | SCREEN_POWERSAVE | delay=NUMBER | delay=0 | can be used to set the delay for the timeout to an different value (or deactivate it if 0) during runtime |
-| CHANGED_PROFILE | from and to values which are the name of the old and the new profile| | resets the screen timeout to either the default delay or to a specific delay configured with the profiles map | 
+| CHANGED_PROFILE | from and to values which are the name of the old and the new profile| | resets the screen timeout to either the default delay or to a specific delay configured with the profiles map |
+
+## Send Notifications
+| Notification | Payload | Cause |
+| ------------ | ------- | ------ |
+| SCREENSAVE_ENABLED | nothing | This notification is send if the module sets the display to screensave mode (or hides the modules) |
+| SCREENSAVE_DISABLED | nothing | This notification is send if the module sets the display to screensave mode (or shows the modules) |

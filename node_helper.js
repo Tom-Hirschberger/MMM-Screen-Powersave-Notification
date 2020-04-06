@@ -61,6 +61,8 @@ module.exports = NodeHelper.create({
         }
       }
       self.runScriptsInDirectory(callbackDir + '/off')
+
+      self.sendSocketNotification("SCREENSAVE_ENABLED")
     } else {
       if( self.forcedDown === false ){
         self.forcedDown = forced
@@ -83,6 +85,7 @@ module.exports = NodeHelper.create({
         }
         self.forcedDown = false
         self.runScriptsInDirectory(callbackDir + '/on')
+        self.sendSocketNotification("SCREENSAVE_DISABLED")
       } else {
         if (self.forcedDown === false) {
           console.log(this.name + ': Turning screen on!')
@@ -95,6 +98,7 @@ module.exports = NodeHelper.create({
             }
           }
           self.runScriptsInDirectory(callbackDir + '/on')
+          self.sendSocketNotification("SCREENSAVE_DISABLED")
         } else {
           console.log(this.name + ': Screen is forced to be off and will not be turned on!')
         }
