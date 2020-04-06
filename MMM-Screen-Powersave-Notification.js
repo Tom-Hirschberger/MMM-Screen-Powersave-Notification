@@ -106,7 +106,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
 
   showModules: function(){
     const self = this
-    self.sendNotification("REENABLE_PROFILE_TIMERS")
+    self.sendNotification("ENABLE_PROFILE_TIMERS")
     if(self.hiddenModules){
       for(var curModule in self.hiddenModules){
         var callback = function(){}
