@@ -75,7 +75,6 @@ Module.register('MMM-Screen-Powersave-Notification', {
 
     const self = this
     self.currentDelayTimer = setTimeout(function() {
-			console.log("UPDATING currentDelay");
       self.currentDelay = self.currentDelay - (self.config.countDownUpdateInterval/1000);
       self.updateDom(self.config.animationSpeed)
 		}, self.config.countDownUpdateInterval);
