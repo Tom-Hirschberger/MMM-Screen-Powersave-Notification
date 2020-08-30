@@ -207,6 +207,8 @@ module.exports = NodeHelper.create({
           self.clearAndSetScreenTimeout(true, profileChange=true);
         }
       }
+
+      console.log("SCREEN_POWER_SAVE: Changed profile received->"+JSON.stringify(payload))
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
     }
