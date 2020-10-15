@@ -21,6 +21,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
     displayHours: false,
     animationSpeed : 0,
     hideInsteadShutoff: false,
+    changeToProfile : null,
     hideAnimationSpeed: 500,
   },
 
@@ -54,31 +55,33 @@ Module.register('MMM-Screen-Powersave-Notification', {
     clearTimeout(this.currentDelayTimer)
 
     const wrapper = document.createElement('div')
-    const textWrapper = document.createElement('span')
+
+    if ((!this.delayDisabled) || (this.config.disabledText !== null)){
+      const textWrapper = document.createElement('span')
       textWrapper.className = 'textWrapper'
 
-    textWrapper.innerHTML=this.config.countDownText
-    wrapper.appendChild(textWrapper)
+      textWrapper.innerHTML=this.config.countDownText
+      wrapper.appendChild(textWrapper)
 
 
-    const valueWrapper = document.createElement('span')
-      valueWrapper.className = 'valueWrapper'
+      const valueWrapper = document.createElement('span')
+        valueWrapper.className = 'valueWrapper'
 
-      if(this.delayDisabled){
-        valueWrapper.innerHTML = this.config.disabledText
-      } else {
-        //valueWrapper.innerHTML = moment("1900-01-01 00:00:00").add(this.currentDelay, 'seconds').format(this.config.countDownFormatString)
-        valueWrapper.innerHTML = this.getTimeString(this.currentDelay)
-      }
+        if(this.delayDisabled){
+          valueWrapper.innerHTML = this.config.disabledText
+        } else {
+          //valueWrapper.innerHTML = moment("1900-01-01 00:00:00").add(this.currentDelay, 'seconds').format(this.config.countDownFormatString)
+          valueWrapper.innerHTML = this.getTimeString(this.currentDelay)
+        }
 
-    wrapper.appendChild(valueWrapper)
+      wrapper.appendChild(valueWrapper)
 
-    const self = this
-    self.currentDelayTimer = setTimeout(function() {
-			console.log("UPDATING currentDelay");
-      self.currentDelay = self.currentDelay - (self.config.countDownUpdateInterval/1000);
-      self.updateDom(self.config.animationSpeed)
-		}, self.config.countDownUpdateInterval);
+      const self = this
+      self.currentDelayTimer = setTimeout(function() {
+        self.currentDelay = self.currentDelay - (self.config.countDownUpdateInterval/1000);
+        self.updateDom(self.config.animationSpeed)
+      }, self.config.countDownUpdateInterval); 
+    }
 
     return wrapper;
   },
@@ -89,13 +92,13 @@ Module.register('MMM-Screen-Powersave-Notification', {
     this.currentDelay = this.config.delay
     this.delayDisabled = false
     this.hiddenModules = null
+    this.profileHistory = []
   },
 
   hideModules: function(){
     const self = this
     self.hiddenModules = []
     var allModules = MM.getModules()
-    self.sendNotification("DISABLE_PROFILE_TIMERS")
     allModules.enumerate(function(curModule){
       var callback = function(){}
       var options = {lockString: self.identifier}
@@ -106,7 +109,6 @@ Module.register('MMM-Screen-Powersave-Notification', {
 
   showModules: function(){
     const self = this
-    self.sendNotification("ENABLE_PROFILE_TIMERS")
     if(self.hiddenModules){
       for(var curModule in self.hiddenModules){
         var callback = function(){}
@@ -128,9 +130,22 @@ Module.register('MMM-Screen-Powersave-Notification', {
       }
       this.updateDom()
     } else if (notification === 'SCREEN_HIDE_MODULES'){
-      self.hideModules()
+      self.sendNotification("DISABLE_PROFILE_TIMERS")
+      if (self.changeToProfile !== null){
+        if(self.profileHistory[1] === self.config.changeToProfile){
+          self.profileHistory[0] = self.profileHistory[1]
+        }
+        self.sendNotification("CURRENT_PROFILE", self.config.changeToProfile)
+      } else {
+        self.hideModules()
+      }
     } else if (notification === 'SCREEN_SHOW_MODULES'){
-      self.showModules()
+      self.sendNotification("ENABLE_PROFILE_TIMERS")
+      if (self.changeToProfile !== null){
+        self.sendNotification("CURRENT_PROFILE", self.profileHistory[0])
+      } else {
+        self.showModules()
+      }
     } else if (
         (notification === 'SCREENSAVE_ENABLED') ||
         (notification === 'SCREENSAVE_DISABLED')
@@ -140,14 +155,24 @@ Module.register('MMM-Screen-Powersave-Notification', {
   },
 
   notificationReceived: function (notification, payload) {
+    const self = this
     if (
        (notification === 'USER_PRESENCE') ||
-       (notification === 'CHANGED_PROFILE') ||
        (notification === 'SCREEN_TOGGLE') ||
        (notification === 'SCREEN_ON') ||
        (notification === 'SCREEN_OFF') ||
        (notification === 'SCREEN_POWERSAVE')
     ) {
+      this.sendSocketNotification(notification, payload)
+    }
+    else if (notification === 'CHANGED_PROFILE'){
+      if (self.profileHistory.length > 1){
+        self.profileHistory[0] = self.profileHistory[1]
+        self.profileHistory[1] = payload.to
+      } else {
+        self.profileHistory[0] = payload.to
+        self.profileHistory[1] = payload.to
+      }
       this.sendSocketNotification(notification, payload)
     }
   }
