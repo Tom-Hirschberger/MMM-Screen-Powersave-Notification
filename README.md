@@ -6,7 +6,7 @@ If you like you can specify different delays for different profiles. The "normal
 
 As of version  0.0.4 it is also possible to only hide/show the modules for users that use a display that does not support turn off/on commands.
 
-** You need a second module like in example [MMM-GPIO-Notifications](https://github.com/Tom-Hirschberger/MMM-GPIO-Notifications) whichs sends the notifications. I wrote a [english](https://www.github.com/Tom-Hirschberger/MMM-GPIO-Notifications/tree/master/examples%2FHC-SR501%2FHC-SR501-GPIO4-README-EN.md) and [german](https://www.github.com/Tom-Hirschberger/MMM-GPIO-Notifications/tree/master/examples%2FHC-SR501%2FHC-SR501-GPIO4-README-DE.md) tutorial on howto use an HC-SR501 PIR sensor with these modules. **
+**You need a second module like in example [MMM-GPIO-Notifications](https://github.com/Tom-Hirschberger/MMM-GPIO-Notifications) whichs sends the notifications. I wrote a [english](https://www.github.com/Tom-Hirschberger/MMM-GPIO-Notifications/tree/master/examples%2FHC-SR501%2FHC-SR501-GPIO4-README-EN.md) and [german](https://www.github.com/Tom-Hirschberger/MMM-GPIO-Notifications/tree/master/examples%2FHC-SR501%2FHC-SR501-GPIO4-README-DE.md) tutorial on howto use an HC-SR501 PIR sensor with these modules.**
 
 ## Installation
 ```sh
