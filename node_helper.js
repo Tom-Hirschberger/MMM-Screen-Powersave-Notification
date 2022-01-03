@@ -177,7 +177,7 @@ module.exports = NodeHelper.create({
     } else if (notification === 'SCREEN_MODULES_HIDDEN'){
       this.hiddenModules = payload
     } else if (notification === 'USER_PRESENCE') {
-      if (payload && payload === true){
+      if (payload && ((payload === true) || (payload==="true"))){
         self.clearAndSetScreenTimeout(true)
       }      
     } else if (notification === 'SCREEN_TOGGLE') {
