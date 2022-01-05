@@ -48,6 +48,7 @@ To display the module insert it in the config.js file. Here is an example:
 | hideInsteadShutoff | If you use an display that can not be turned off and on with the pi you can hide the modules only instead. Turning this option to true will do so | boolean | false |
 | hideAnimationSpeed | The hiding and reappearing off the modules will be animated with this speed | Integer | 500 |
 | changeToProfile | If the hiding is enabled and this string is set an change to the new profile is triggered. If the screensave mode is disabled a change to the previous profile will be initiated | String | null |
+| changeToProfileBeforeAction | Set a profile string to this variable if you like the module to change the screen to a specific profile (i.e. start page) before the "normal" action is triggerd | String | null |
 
 ## Received Notifications
 | Notification | Payload | Default | Result |

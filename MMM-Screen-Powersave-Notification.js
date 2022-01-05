@@ -23,6 +23,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
     hideInsteadShutoff: false,
     changeToProfile : null,
     hideAnimationSpeed: 500,
+    changeToProfileBeforeAction: null
   },
 
   getStyles: function() {
@@ -148,7 +149,8 @@ Module.register('MMM-Screen-Powersave-Notification', {
       }
     } else if (
         (notification === 'SCREENSAVE_ENABLED') ||
-        (notification === 'SCREENSAVE_DISABLED')
+        (notification === 'SCREENSAVE_DISABLED') ||
+        (notification === 'CURRENT_PROFILE')
     ){
       this.sendNotification(notification,payload)
     }

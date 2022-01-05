@@ -19,6 +19,11 @@ module.exports = NodeHelper.create({
     this.currentProfile = ''
     this.currentProfilePattern = new RegExp('.*')
     this.modulesHidden  = false
+    this.skipNextProfileChange= false
+  },
+
+  Sleep: function (milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
   },
 
   isScreenOn: function () {
@@ -42,19 +47,24 @@ module.exports = NodeHelper.create({
     }
   },
 
-  turnScreenOff: function (forced) {
+  turnScreenOff: async function (forced) {
     const self = this
     if (self.isScreenOn()){
+      if (self.config.changeToProfileBeforeAction !== null) {
+        self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
+        await self.Sleep(500)
+      }
+
       if (forced === true) {
-        console.log(this.name + ': Turning screen off (forced)!')
+        console.log(self.name + ': Turning screen off (forced)!')
         self.forcedDown = true
       } else {
-        console.log(this.name + ': Turning screen off!')
+        console.log(self.name + ': Turning screen off!')
         self.forcedDown = false
       }
       if(self.config.hideInsteadShutoff){
         self.sendSocketNotification("SCREEN_HIDE_MODULES")
-        this.modulesHidden = true
+        self.modulesHidden = true
       } else {
         if (self.config.screenOffCommand !== '') {
           execSync(self.config.screenOffCommand)
@@ -74,10 +84,10 @@ module.exports = NodeHelper.create({
     const self = this
     if ( self.isScreenOn() === false ){
       if (forced === true) {
-        console.log(this.name + ': Turning screen on (forced)!')
+        console.log(self.name + ': Turning screen on (forced)!')
         if(self.config.hideInsteadShutoff){
           self.sendSocketNotification("SCREEN_SHOW_MODULES")
-          this.modulesHidden = false
+          self.modulesHidden = false
         } else {
           if (self.config.screenOnCommand !== '') {
             execSync(self.config.screenOnCommand)
@@ -88,10 +98,10 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification("SCREENSAVE_DISABLED")
       } else {
         if (self.forcedDown === false) {
-          console.log(this.name + ': Turning screen on!')
+          console.log(self.name + ': Turning screen on!')
           if(self.config.hideInsteadShutoff){
             self.sendSocketNotification("SCREEN_SHOW_MODULES")
-            this.modulesHidden = false
+            self.modulesHidden = false
           } else {
             if (self.config.screenOnCommand !== '') {
               execSync(self.config.screenOnCommand)
@@ -100,7 +110,7 @@ module.exports = NodeHelper.create({
           self.runScriptsInDirectory(callbackDir + '/on')
           self.sendSocketNotification("SCREENSAVE_DISABLED")
         } else {
-          console.log(this.name + ': Screen is forced to be off and will not be turned on!')
+          console.log(self.name + ': Screen is forced to be off and will not be turned on!')
         }
       }
     } else {
