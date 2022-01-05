@@ -1,6 +1,6 @@
 {
   "name": "MMM-Screen-Powersave-Notification",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "main": "MMM-Screen-Powersave-Notification.js",
   "dependencies": {
