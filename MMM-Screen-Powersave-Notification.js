@@ -23,6 +23,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
     hideInsteadShutoff: false,
     changeToProfile : null,
     hideAnimationSpeed: 500,
+    changeToProfileBeforeAction: null
   },
 
   getStyles: function() {
@@ -100,10 +101,12 @@ Module.register('MMM-Screen-Powersave-Notification', {
     self.hiddenModules = []
     var allModules = MM.getModules()
     allModules.enumerate(function(curModule){
-      var callback = function(){}
-      var options = {lockString: self.identifier}
-      self.hiddenModules.push(curModule)
-      curModule.hide(self.config.hideAnimationSpeed,callback,options)
+      if (!curModule.hidden){
+        var callback = function(){}
+        var options = {lockString: self.identifier}
+        self.hiddenModules.push(curModule)
+        curModule.hide(self.config.hideAnimationSpeed,callback,options)
+      }
     })
   },
 
@@ -131,7 +134,7 @@ Module.register('MMM-Screen-Powersave-Notification', {
       this.updateDom()
     } else if (notification === 'SCREEN_HIDE_MODULES'){
       self.sendNotification("DISABLE_PROFILE_TIMERS")
-      if (self.changeToProfile !== null){
+      if (self.config.changeToProfile !== null){
         if(self.profileHistory[1] === self.config.changeToProfile){
           self.profileHistory[0] = self.profileHistory[1]
         }
@@ -141,14 +144,15 @@ Module.register('MMM-Screen-Powersave-Notification', {
       }
     } else if (notification === 'SCREEN_SHOW_MODULES'){
       self.sendNotification("ENABLE_PROFILE_TIMERS")
-      if (self.changeToProfile !== null){
+      if (self.config.changeToProfile !== null){
         self.sendNotification("CURRENT_PROFILE", self.profileHistory[0])
       } else {
         self.showModules()
       }
     } else if (
         (notification === 'SCREENSAVE_ENABLED') ||
-        (notification === 'SCREENSAVE_DISABLED')
+        (notification === 'SCREENSAVE_DISABLED') ||
+        (notification === 'CURRENT_PROFILE')
     ){
       this.sendNotification(notification,payload)
     }
