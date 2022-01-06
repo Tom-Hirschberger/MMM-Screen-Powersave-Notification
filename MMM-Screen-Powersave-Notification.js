@@ -167,6 +167,19 @@ Module.register('MMM-Screen-Powersave-Notification', {
        (notification === 'SCREEN_OFF') ||
        (notification === 'SCREEN_POWERSAVE')
     ) {
+      if (
+        (typeof payload !== 'undefined') && 
+        (typeof payload.forced !== 'undefined')
+      ){
+        if (
+          (payload.forced === true) ||
+          (payload.forced.toString().toLowerCase() === "true")
+        ){
+          payload.forced = true
+        } else {
+          payload.forced = false
+        }
+      }
       this.sendSocketNotification(notification, payload)
     }
     else if (notification === 'CHANGED_PROFILE'){
