@@ -188,6 +188,7 @@ module.exports = NodeHelper.create({
       this.hiddenModules = payload
     } else if (notification === 'USER_PRESENCE') {
       if (payload && ((payload === true) || (payload==="true"))){
+	self.turnScreenOn(false)
         self.clearAndSetScreenTimeout(true)
       }      
     } else if (notification === 'SCREEN_TOGGLE') {
