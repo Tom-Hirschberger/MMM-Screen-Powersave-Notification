@@ -49,12 +49,11 @@ module.exports = NodeHelper.create({
 
   turnScreenOff: async function (forced) {
     const self = this
+    if (self.config.changeToProfileBeforeAction !== null) {
+      self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
+      await self.Sleep(500)
+    }
     if (self.isScreenOn()){
-      if (self.config.changeToProfileBeforeAction !== null) {
-        self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
-        await self.Sleep(500)
-      }
-
       if (forced === true) {
         console.log(self.name + ': Turning screen off (forced)!')
         self.forcedDown = true
@@ -188,8 +187,12 @@ module.exports = NodeHelper.create({
       this.hiddenModules = payload
     } else if (notification === 'USER_PRESENCE') {
       if (payload && ((payload === true) || (payload==="true"))){
-	self.turnScreenOn(false)
-        self.clearAndSetScreenTimeout(true)
+	      self.turnScreenOn(false)
+        if (self.isScreenOn()){
+          self.clearAndSetScreenTimeout(true)
+        } else {
+          self.clearAndSetScreenTimeout(false,false)
+        }
       }      
     } else if (notification === 'SCREEN_TOGGLE') {
       var forced = payload.forced === true ? payload.forced : false
