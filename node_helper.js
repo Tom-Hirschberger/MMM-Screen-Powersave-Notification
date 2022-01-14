@@ -50,6 +50,7 @@ module.exports = NodeHelper.create({
   turnScreenOff: async function (forced) {
     const self = this
     if (self.config.changeToProfileBeforeAction !== null) {
+      self.skipNextProfileChange = true
       self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
       await self.Sleep(500)
     }
@@ -190,8 +191,6 @@ module.exports = NodeHelper.create({
 	      self.turnScreenOn(false)
         if (self.isScreenOn()){
           self.clearAndSetScreenTimeout(true)
-        } else {
-          self.clearAndSetScreenTimeout(false,false)
         }
       }      
     } else if (notification === 'SCREEN_TOGGLE') {
@@ -213,13 +212,19 @@ module.exports = NodeHelper.create({
       }
       self.clearAndSetScreenTimeout(true)
     } else if (notification === 'CHANGED_PROFILE'){
-      if(typeof payload.to !== 'undefined'){
-        self.currentProfile = payload.to
-        self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
+      if (!self.skipNextProfileChange){
+        if(typeof payload.to !== 'undefined'){
+          self.currentProfile = payload.to
+          self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
 
-        if(self.config.profiles && (Object.keys(self.config.profiles).length > 0)){
-          self.clearAndSetScreenTimeout(true, profileChange=true);
+          if (payload.to !== self.config.changeToProfile){
+            if(self.config.profiles && (Object.keys(self.config.profiles).length > 0)){
+              self.clearAndSetScreenTimeout(true, profileChange=true);
+            }
+          }
         }
+      } else {
+        self.skipNextProfileChange = false
       }
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
