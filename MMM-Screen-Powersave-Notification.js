@@ -61,35 +61,36 @@ Module.register("MMM-Screen-Powersave-Notification", {
   },
 
   getDom: function () {
-    clearTimeout(this.currentDelayTimer);
-
     const wrapper = document.createElement("div");
+    if (typeof this.data.position !== "undefined"){
+      clearTimeout(this.currentDelayTimer);
 
-    if (!this.delayDisabled || this.config.disabledText !== null) {
-      const textWrapper = document.createElement("span");
-      textWrapper.className = "textWrapper";
+      if (!this.delayDisabled || this.config.disabledText !== null) {
+        const textWrapper = document.createElement("span");
+        textWrapper.className = "textWrapper";
 
-      textWrapper.innerHTML = this.config.countDownText;
-      wrapper.appendChild(textWrapper);
+        textWrapper.innerHTML = this.config.countDownText;
+        wrapper.appendChild(textWrapper);
 
-      const valueWrapper = document.createElement("span");
-      valueWrapper.className = "valueWrapper";
+        const valueWrapper = document.createElement("span");
+        valueWrapper.className = "valueWrapper";
 
-      if (this.delayDisabled) {
-        valueWrapper.innerHTML = this.config.disabledText;
-      } else {
-        //valueWrapper.innerHTML = moment("1900-01-01 00:00:00").add(this.currentDelay, 'seconds').format(this.config.countDownFormatString)
-        valueWrapper.innerHTML = this.getTimeString(this.currentDelay);
+        if (this.delayDisabled) {
+          valueWrapper.innerHTML = this.config.disabledText;
+        } else {
+          //valueWrapper.innerHTML = moment("1900-01-01 00:00:00").add(this.currentDelay, 'seconds').format(this.config.countDownFormatString)
+          valueWrapper.innerHTML = this.getTimeString(this.currentDelay);
+        }
+
+        wrapper.appendChild(valueWrapper);
+
+        const self = this;
+        self.currentDelayTimer = setTimeout(function () {
+          self.currentDelay =
+            self.currentDelay - self.config.countDownUpdateInterval / 1000;
+          self.updateDom(self.config.animationSpeed);
+        }, self.config.countDownUpdateInterval);
       }
-
-      wrapper.appendChild(valueWrapper);
-
-      const self = this;
-      self.currentDelayTimer = setTimeout(function () {
-        self.currentDelay =
-          self.currentDelay - self.config.countDownUpdateInterval / 1000;
-        self.updateDom(self.config.animationSpeed);
-      }, self.config.countDownUpdateInterval);
     }
 
     return wrapper;
