@@ -49,12 +49,12 @@ module.exports = NodeHelper.create({
 
   turnScreenOff: async function (forced) {
     const self = this
+    if (self.config.changeToProfileBeforeAction !== null) {
+      self.skipNextProfileChange = true
+      self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
+      await self.Sleep(500)
+    }
     if (self.isScreenOn()){
-      if (self.config.changeToProfileBeforeAction !== null) {
-        self.sendSocketNotification("CURRENT_PROFILE", self.config.changeToProfileBeforeAction)
-        await self.Sleep(500)
-      }
-
       if (forced === true) {
         console.log(self.name + ': Turning screen off (forced)!')
         self.forcedDown = true
@@ -188,7 +188,10 @@ module.exports = NodeHelper.create({
       this.hiddenModules = payload
     } else if (notification === 'USER_PRESENCE') {
       if (payload && ((payload === true) || (payload==="true"))){
-        self.clearAndSetScreenTimeout(true)
+	      self.turnScreenOn(false)
+        if (self.isScreenOn()){
+          self.clearAndSetScreenTimeout(true)
+        }
       }      
     } else if (notification === 'SCREEN_TOGGLE') {
       var forced = payload.forced === true ? payload.forced : false
@@ -209,13 +212,19 @@ module.exports = NodeHelper.create({
       }
       self.clearAndSetScreenTimeout(true)
     } else if (notification === 'CHANGED_PROFILE'){
-      if(typeof payload.to !== 'undefined'){
-        self.currentProfile = payload.to
-        self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
+      if (!self.skipNextProfileChange){
+        if(typeof payload.to !== 'undefined'){
+          self.currentProfile = payload.to
+          self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
 
-        if(self.config.profiles && (Object.keys(self.config.profiles).length > 0)){
-          self.clearAndSetScreenTimeout(true, profileChange=true);
+          if (payload.to !== self.config.changeToProfile){
+            if(self.config.profiles && (Object.keys(self.config.profiles).length > 0)){
+              self.clearAndSetScreenTimeout(true, profileChange=true);
+            }
+          }
         }
+      } else {
+        self.skipNextProfileChange = false
       }
     } else {
       console.log(this.name + ': Received Notification: ' + notification)
