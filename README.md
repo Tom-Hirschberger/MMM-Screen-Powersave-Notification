@@ -52,7 +52,103 @@ To display the module insert it in the config.js file. Here is an example:
 | hideInsteadShutoff              | If you use an display that can not be turned off and on with the pi you can hide the modules only instead. Turning this option to true will do so                                | boolean | false                               |
 | hideAnimationSpeed              | The hiding and reappearing off the modules will be animated with this speed                                                                                                      | Integer | 500                                 |
 | changeToProfile                 | If the hiding is enabled and this string is set an change to the new profile is triggered. If the screensave mode is disabled a change to the previous profile will be initiated | String  | null                                |
-| changeToProfileBeforeAction     | Set a profile string to this variable if you like the module to change the screen to a specific profile (i.e. start page) before the "normal" action is triggerd                 | String  | null                                |
+| changeToProfileBeforeAction     | Set a profile string to this variable if you like the module to change the screen to a specific profile (i.e. start page) before the "normal" action is triggerd                 | String  | null                               |
+
+## Alternative commands
+
+In default the module uses `vcgencmd` to control the screen. There might be situations where `vcgencmd` fails (for example with newer Raspberry Bullseye versions) and you need to find an alterative way to control the screen.
+
+You can provide your own scripts and set the paths to them with the configuration options `screenStatusCommand`, `screenOnCommand` and `screenOffCommand`.
+
+Make sure to let the scripts return/print "display_power=0" if the screen is turned off and "display_power=1" if the screen is turned on!
+
+The module already provides alternative scripts in the controlScripts directory which will be described in the following sections...
+
+### xrandr_control
+
+This solution will work even with Raspberry OS Bullseye which uses the new "vc4-kms-v3d" graphics driver.
+
+The first option of the script is the action you want the second option is optional and the port you want to use.
+My Raspberry 4 provides two HDMI ports which are called "HDMI-1" and "HDMI-2".
+
+You can check which port is used with the command:
+
+```bash
+xrandr -display :0.0 --current
+```
+
+The output will look something like:
+
+```bash
+Screen 0: minimum 320 x 200, current 800 x 1280, maximum 7680 x 7680
+HDMI-1 connected primary 800x1280+0+0 right (normal left inverted right x axis y axis) 519mm x 324mm
+   1280x800      59.91*+  60.00  
+   1920x1080     60.00    59.94  
+   1920x1080i    60.00    59.94  
+   1280x1024     60.02  
+   1280x960      60.00  
+   1152x864      75.00  
+   1280x720      60.00    59.94  
+   1024x768      75.03    70.07    60.00  
+   800x600       72.19    75.00    60.32    56.25  
+   720x576i      50.00  
+   720x480       60.00    59.94  
+   720x480i      60.00    59.94  
+   640x480       75.00    72.81    60.00    59.94  
+HDMI-2 disconnected (normal left inverted right x axis y axis)
+```
+
+The output above shows that HDMI-1 is connected and HDMI-2 is disconnected. Depending of your output you need to change the second option in the command configurtions which are following.
+
+In the following example the output is simply shut off or on and no rotation is provided:
+
+```json5
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+            screenStatusCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control status HDMI-1",
+            screenOnCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control on HDMI-1",
+            screenOffCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control off HDMI-1"
+        }
+    }
+```
+
+In the following example the output is shut off and on but it is rotatet left:
+
+```json5
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+            screenStatusCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control status HDMI-1",
+            screenOnCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control left HDMI-1",
+            screenOffCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/xrandr_control off HDMI-1"
+        }
+    }
+```
+
+Other possible rotations are "normal", "inverted", "right".
+
+### tvservice_control
+
+The `tvservice` command was an alternative to `vcgencmd` but it will **NOT** work with current installations of Raspberry OS Bullseye!
+
+Rotation is **NOT** supported only simple on or off!
+
+Use the following configuration if you want to use `tvservice` command.
+
+```json5
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+            screenStatusCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/tvservice_control status",
+            screenOnCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/tvservice_control on",
+            screenOffCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/tvservice_control off"
+        }
+    }
+```
 
 ## Received Notifications
 

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+port="HDMI-1"
+if [ "$2" != "" ]
+then
+	port=$2
+fi
+
+#xrandr -display :0.0 | grep -cE "^HDMI-[0-9][[:space:]]connected[^0-9]*[0-9]+[^\(]+\(.*"
+#xrandr -display :0.0 --output "HDMI-1" --auto --rotate right
+#xrandr -display :0.0 --output "HDMI-1" --off
+
+if [ "$1" == "on" ]
+then
+	#normal,inverted,left,right
+	xrandr -display :0.0 --output $port --auto
+        echo "display_power=1"
+elif [ "$1" == "normal" ] || [ "$1" == "inverted" ] || [ "$1" == "left" ] || [ "$1" == "right" ]
+then
+	xrandr -display :0.0 --output "HDMI-1" --auto --rotate $1
+elif [ "$1" == "off" ]
+then
+	xrandr -display :0.0 --output $port --off
+        echo "display_power=0"
+else
+	if [ `xrandr -display :0.0 | grep -cE "^${port}[[:space:]]connected[^0-9]*[0-9]+[^\(]+\(.*"` -gt 0 ]
+	then
+		echo "display_power=1"
+	else
+		echo "display_power=0"
+	fi
+fi
