@@ -7,6 +7,8 @@
 const NodeHelper = require('node_helper')
 const exec = require('child_process').exec
 const execSync = require('child_process').execSync
+const spawn = require('child_process').spawn
+const spawnSync = require('child_process').spawnSync
 const fs = require('fs')
 const path = require('path')
 const callbackDir = path.join(__dirname, '/callbackScripts')
@@ -36,7 +38,22 @@ module.exports = NodeHelper.create({
     } else {
       const self = this
       if (self.config.screenStatusCommand !== '') {
-        var result = execSync(this.config.screenStatusCommand)
+        let spawnOutput = spawnSync(this.config.screenStatusCommand, this.config.screenStatusArgs)
+        result = spawnOutput.stdout
+        if (result != null){
+          result = result.toString().trim()
+        } else {
+          result = ""
+        }
+
+        if (spawnOutput.stderr != null){
+          let error = error.toString().trim()
+          if (error != ""){
+            console.log(self.name + ': Error during screen status check: ')
+            console.log(spawnOutput.stderr.toString())
+          }
+        }
+
         if (result.indexOf('display_power=0') === 0) {
           return false
         } else {
@@ -67,7 +84,14 @@ module.exports = NodeHelper.create({
         self.modulesHidden = true
       } else {
         if (self.config.screenOffCommand !== '') {
-          execSync(self.config.screenOffCommand)
+          let spawnOutput = spawnSync(this.config.screenOffCommand, this.config.screenOffArgs)
+          if (spawnOutput.stderr != null){
+            let error = spawnOutput.stderr.toString().trim()
+            if (error != ""){
+              console.log(self.name + ': Error during screen off command: ')
+              console.log(spawnOutput.stderr.toString())
+            }
+          }
         }
       }
       self.runScriptsInDirectory(callbackDir + '/off')
@@ -90,7 +114,14 @@ module.exports = NodeHelper.create({
           self.modulesHidden = false
         } else {
           if (self.config.screenOnCommand !== '') {
-            execSync(self.config.screenOnCommand)
+            let spawnOutput = spawnSync(this.config.screenOnCommand, this.config.screenOnArgs)
+            if (spawnOutput.stderr != null){
+              let error = spawnOutput.stderr.toString().trim()
+              if (error != ""){
+                console.log(self.name + ': Error during screen on command: ')
+                console.log(spawnOutput.stderr.toString())
+              }
+            }
           }
         }
         self.forcedDown = false
@@ -104,7 +135,14 @@ module.exports = NodeHelper.create({
             self.modulesHidden = false
           } else {
             if (self.config.screenOnCommand !== '') {
-              execSync(self.config.screenOnCommand)
+              let spawnOutput = spawnSync(this.config.screenOnCommand, this.config.screenOnArgs)
+              if (spawnOutput.stderr != null){
+                let error = spawnOutput.stderr.toString().trim()
+                if (error != ""){
+                  console.log(self.name + ': Error during screen on command: ')
+                  console.log(spawnOutput.stderr.toString())
+                }
+              }
             }
           }
           self.runScriptsInDirectory(callbackDir + '/on')
@@ -138,11 +176,24 @@ module.exports = NodeHelper.create({
       } else {
         for (var i = 0; i < items.length; i++) {
           console.log(self.name + ':   ' + items[i])
-          exec(directory + '/' + items[i], function (error, stdout, stderr) {
-            if (error) {
-              console.log(stderr)
+          let child = spawnSync(directory + '/' + items[i])
+
+          let scriptErrorOutput = ""
+          child.stderr.setEncoding('utf8');
+          child.stderr.on('data', function(data) {
+              console.log('stderr: ' + data);
+
+              data=data.toString();
+              scriptErrorOutput+=data;
+          });
+
+          child.on('close', function(code) {
+            if (scriptErrorOutput != ''){
+              scriptErrorOutput = scriptErrorOutput.trim()
             }
-          })
+            console.log(self.name + ': Error during script call: ')
+            console.log(scriptErrorOutput)
+          });
         }
       }
     })
