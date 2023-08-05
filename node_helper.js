@@ -5,8 +5,6 @@
  * MIT Licensed.
  */
 const NodeHelper = require('node_helper')
-const exec = require('child_process').exec
-const execSync = require('child_process').execSync
 const spawn = require('child_process').spawn
 const spawnSync = require('child_process').spawnSync
 const fs = require('fs')
@@ -176,21 +174,21 @@ module.exports = NodeHelper.create({
       } else {
         for (var i = 0; i < items.length; i++) {
           console.log(self.name + ':   ' + items[i])
-          let child = spawnSync(directory + '/' + items[i])
+          let child = spawn(directory + '/' + items[i])
 
           let scriptErrorOutput = ""
-          let data = ""
-          child.stderr.on('data', function(data) {
-              data=data.toString();
-              scriptErrorOutput+=data;
+
+          child.stderr.on('data', (data) => {
+            scriptErrorOutput+=data.toString()
           });
 
           child.on('close', function(code) {
-            if (scriptErrorOutput != ''){
-              scriptErrorOutput = scriptErrorOutput.trim()
+            scriptErrorOutput = scriptErrorOutput.trim()
+
+            if (scriptErrorOutput != "") {
+              console.log(self.name + ': Error during script call: ')
+              console.log(scriptErrorOutput)
             }
-            console.log(self.name + ': Error during script call: ')
-            console.log(scriptErrorOutput)
           });
         }
       }
