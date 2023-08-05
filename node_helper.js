@@ -179,10 +179,8 @@ module.exports = NodeHelper.create({
           let child = spawnSync(directory + '/' + items[i])
 
           let scriptErrorOutput = ""
-          child.stderr.setEncoding('utf8');
+          let data = ""
           child.stderr.on('data', function(data) {
-              console.log('stderr: ' + data);
-
               data=data.toString();
               scriptErrorOutput+=data;
           });
