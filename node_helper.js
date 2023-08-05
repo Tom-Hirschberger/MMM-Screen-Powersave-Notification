@@ -45,7 +45,7 @@ module.exports = NodeHelper.create({
         }
 
         if (spawnOutput.stderr != null){
-          let error = error.toString().trim()
+          let error = spawnOutput.stderr.toString().trim()
           if (error != ""){
             console.log(self.name + ': Error during screen status check: ')
             console.log(spawnOutput.stderr.toString())
