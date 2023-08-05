@@ -10,9 +10,12 @@ Module.register("MMM-Screen-Powersave-Notification", {
   defaults: {
     delay: 60,
     profiles: {},
-    screenOnCommand: "/usr/bin/vcgencmd display_power 1",
-    screenOffCommand: "/usr/bin/vcgencmd display_power 0",
-    screenStatusCommand: "/usr/bin/vcgencmd display_power",
+    screenOnCommand: "/usr/bin/vcgencmd",
+    screenOffCommand: "/usr/bin/vcgencmd",
+    screenStatusCommand: "/usr/bin/vcgencmd",
+    screenOnArgs: ["display_power", "1"],
+    screenOffArgs: ["display_power", "0"],
+    screenStatusArgs: ["display_power"],
     turnScreenOnIfProfileDelayIsSet: true,
     countDownText: "Display powersave: ",
     disabledText: "disabled",
@@ -98,6 +101,40 @@ Module.register("MMM-Screen-Powersave-Notification", {
 
   start: function () {
     Log.info("Starting module: " + this.name);
+
+    if ( this.config.screenOnCommand.indexOf(" ") != -1 ) {
+      this.config.screenOnCommand = this.config.screenOnCommand.split(" ")
+      if (this.config.screenOnCommand.length > 1) {
+        this.config.screenOnArgs = this.config.screenOnCommand.slice(1)
+      } else {
+        this.config.screenOnArgs = []
+      }
+      
+      this.config.screenOnCommand = this.config.screenOnCommand[0]
+    }
+
+    if ( this.config.screenOffCommand.indexOf(" ") != -1 ) {
+      this.config.screenOffCommand = this.config.screenOffCommand.split(" ")
+      if (this.config.screenOffCommand.length > 1) {
+        this.config.screenOffArgs = this.config.screenOffCommand.slice(1)
+      } else {
+        this.config.screenOffArgs = []
+      }
+      
+      this.config.screenOffCommand = this.config.screenOffCommand[0]
+    }
+
+    if ( this.config.screenStatusCommand.indexOf(" ") != -1 ) {
+      this.config.screenStatusCommand = this.config.screenStatusCommand.split(" ")
+      if (this.config.screenStatusCommand.length > 1) {
+        this.config.screenStatusArgs = this.config.screenStatusCommand.slice(1)
+      } else {
+        this.config.screenStatusArgs = []
+      }
+      
+      this.config.screenStatusCommand = this.config.screenStatusCommand[0]
+    }
+
     this.sendSocketNotification("CONFIG", this.config);
     this.currentDelay = this.config.delay;
     this.delayDisabled = false;
