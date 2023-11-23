@@ -1,7 +1,7 @@
 {
   "name": "MMM-Screen-Powersave-Notification",
   "version": "0.0.8",
-  "description": "",
+  "description": "A MagicMirror² module which controls the state of a screen and can call scripts after the screen got enabled or disabled. This module needs a other module like MMM-GPIO-Notifications which sends notifications on USER_PRESENCE.",
   "main": "MMM-Screen-Powersave-Notification.js",
   "dependencies": {
     "child_process": "latest",
@@ -15,6 +15,12 @@
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-Screen-Powersave-Notification.git"
   },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "screensave",
+    "PIR"
+  ],
   "author": "Thomas Hirschberger",
   "license": "MIT",
   "bugs": {

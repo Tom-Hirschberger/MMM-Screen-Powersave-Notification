@@ -1,6 +1,6 @@
 /* global Module
 
-/* Magic Mirror
+/* MagicMirror²
  * Module: Screen-Powersave-Notification
  *
  * By Tom Hirschberger
