@@ -43,7 +43,7 @@ Module.register("MMM-Screen-Powersave-Notification", {
       hours = Math.round((seconds - remainingSeconds) / 3600);
     }
 
-    remainingSeconds2 = remainingSeconds % 60;
+    let remainingSeconds2 = remainingSeconds % 60;
     var minutes = Math.round((remainingSeconds - remainingSeconds2) / 60);
 
     if (this.config.displayHours) {
@@ -60,6 +60,13 @@ Module.register("MMM-Screen-Powersave-Notification", {
         ":" +
         ("" + remainingSeconds2).padStart(2, "0")
       );
+    }
+  },
+
+  conditionalUpdateDom: function(animationSpeed){
+    const self = this
+    if(typeof self.data.position !== "undefined"){
+      self.updateDom(animationSpeed)
     }
   },
 
@@ -90,8 +97,8 @@ Module.register("MMM-Screen-Powersave-Notification", {
         const self = this;
         self.currentDelayTimer = setTimeout(function () {
           self.currentDelay =
-            self.currentDelay - self.config.countDownUpdateInterval / 1000;
-          self.updateDom(self.config.animationSpeed);
+          self.currentDelay - self.config.countDownUpdateInterval / 1000;
+          self.conditionalUpdateDom(self.config.animationSpeed);
         }, self.config.countDownUpdateInterval);
       }
     }
@@ -181,7 +188,7 @@ Module.register("MMM-Screen-Powersave-Notification", {
       } else {
         this.delayDisabled = false;
       }
-      this.updateDom();
+      self.conditionalUpdateDom(self.config.animationSpeed)
     } else if (notification === "SCREEN_HIDE_MODULES") {
       self.sendNotification("DISABLE_PROFILE_TIMERS");
       if (self.config.changeToProfile !== null) {
