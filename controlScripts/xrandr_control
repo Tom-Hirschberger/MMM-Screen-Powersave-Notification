@@ -17,7 +17,7 @@ then
         echo "display_power=1"
 elif [ "$1" == "normal" ] || [ "$1" == "inverted" ] || [ "$1" == "left" ] || [ "$1" == "right" ]
 then
-	xrandr -display :0.0 --output "HDMI-1" --auto --rotate $1
+	xrandr -display :0.0 --output $port --auto --rotate $1
 elif [ "$1" == "off" ]
 then
 	xrandr -display :0.0 --output $port --off
