@@ -1,6 +1,6 @@
 {
   "name": "MMM-Screen-Powersave-Notification",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A MagicMirror² module which controls the state of a screen and can call scripts after the screen got enabled or disabled. This module needs a other module like MMM-GPIO-Notifications which sends notifications on USER_PRESENCE.",
   "main": "MMM-Screen-Powersave-Notification.js",
   "dependencies": {

@@ -14,15 +14,15 @@ if [ "$1" == "on" ]
 then
 	#normal,inverted,left,right
 	xrandr -display :0.0 --output $port --auto
-        echo "display_power=1"
+	$0 status $2
 elif [ "$1" == "normal" ] || [ "$1" == "inverted" ] || [ "$1" == "left" ] || [ "$1" == "right" ]
 then
 	xrandr -display :0.0 --output $port --auto --rotate $1
-        echo "display_power=1"
+	$0 status $2
 elif [ "$1" == "off" ]
 then
 	xrandr -display :0.0 --output $port --off
-        echo "display_power=0"
+	$0 status $2
 else
 	if [ `xrandr -display :0.0 | grep -cE "^${port}[[:space:]]connected[^0-9]*[0-9]+[^\(]+\(.*"` -gt 0 ]
 	then

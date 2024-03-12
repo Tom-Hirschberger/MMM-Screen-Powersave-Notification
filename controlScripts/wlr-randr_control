@@ -1,0 +1,31 @@
+#!/bin/bash -l
+export WAYLAND_DISPLAY=wayland-1
+port="HDMI-A-1"
+if [ "$2" != "" ]
+then
+	port=$2
+fi
+
+#wlr-randr --output HDMI-A-1 --transform 180 --on
+#wlr-randr | grep Enabled | grep -c yes
+
+if [ "$1" == "on" ]
+then
+	#normal,inverted,left,right
+	wlr-randr --output $port --on
+	$0 status $2
+elif [ "$1" == "off" ]
+then
+	wlr-randr --output $port --off
+	$0 status $2
+elif [ "$1" == "status" ] || [ "$1" == "" ]
+then
+	if [ `wlr-randr | grep -i Enabled | grep -ic yes` -gt 0 ]
+	then
+		echo "display_power=1"
+	else
+		echo "display_power=0"
+	fi
+else
+	wlr-randr --output $port --transform $1
+fi
