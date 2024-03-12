@@ -56,7 +56,7 @@ To display the module insert it in the config.js file. Here is an example:
 
 ## Alternative commands
 
-In default the module uses `vcgencmd` to control the screen. There might be situations where `vcgencmd` fails (for example with newer Raspberry Bullseye versions) and you need to find an alterative way to control the screen.
+In default the module uses `vcgencmd` to control the screen. There might be situations where `vcgencmd` fails (for example with newer Raspberry Bullseye or Bookworm versions) and you need to find an alterative way to control the screen.
 
 You can provide your own scripts and set the paths to them with the configuration options `screenStatusCommand`, `screenOnCommand` and `screenOffCommand`.
 
@@ -67,6 +67,16 @@ The module already provides alternative scripts in the controlScripts directory 
 ### xrandr_control
 
 This solution will work even with Raspberry OS Bullseye which uses the new "vc4-kms-v3d" graphics driver.
+
+If you use Raspberry OS Bookworm you can either change your default graphics stack back to X11 instead of Wayland or you can use the `wlr-randr_control` wrapper in the next section (preferred way).
+
+If you want to change back to X11 you can do it with the following steps:
+
+```bash
+sudo raspi-config
+```
+
+Select Option "6 - advanced options" then "A6-Wayland" and switch back to X11 (thanks to [https://forums.raspberrypi.com/viewtopic.php?t=360281#p2161288](https://forums.raspberrypi.com/viewtopic.php?t=360281#p2161288))
 
 The first option of the script is the action you want the second option is optional and the port you want to use.
 My Raspberry 4 provides two HDMI ports which are called "HDMI-1" and "HDMI-2".
@@ -129,6 +139,90 @@ In the following example the output is shut off and on but it is rotatet left:
 ```
 
 Other possible rotations are "normal", "inverted", "right".
+
+### wlr-randr_control
+
+This solution will work even with Raspberry OS Bookworm.
+
+The first option of the script is the action you want the second option is optional and the port you want to use. The third option is optional, too and can be used to set the `WAYLAND_DISPLAY` ("wayland-1" usually).
+
+My Raspberry 4 provides two HDMI ports which are called "HDMI-A-1" and "HDMI-A-2".
+
+You can check which port is used with the command:
+
+```bash
+WAYLAND_DISPLAY=wayland-1 wlr-randr
+```
+
+The output will look something like:
+
+```bash
+HDMI-A-1 "HCD PJ402D-2 LTM12 (HDMI-A-1)"
+  Enabled: yes
+  Modes:
+    640x480 px, 59.939999 Hz
+    640x480 px, 60.000000 Hz
+    640x480 px, 72.808998 Hz
+    640x480 px, 75.000000 Hz
+    720x480 px, 59.939999 Hz
+    720x480 px, 59.939999 Hz
+    720x480 px, 59.939999 Hz
+    720x480 px, 60.000000 Hz
+    720x480 px, 60.000000 Hz
+    720x576 px, 50.000000 Hz
+    800x600 px, 56.250000 Hz
+    800x600 px, 60.317001 Hz
+    800x600 px, 72.188004 Hz
+    800x600 px, 75.000000 Hz
+    1024x768 px, 60.004002 Hz
+    1024x768 px, 70.069000 Hz
+    1024x768 px, 75.028999 Hz
+    1280x720 px, 59.939999 Hz
+    1280x720 px, 60.000000 Hz
+    1152x864 px, 75.000000 Hz
+    1280x800 px, 59.995998 Hz
+    1280x960 px, 60.000000 Hz
+    1280x1024 px, 60.020000 Hz
+    1920x1080 px, 59.939999 Hz
+    1920x1080 px, 60.000000 Hz
+    1920x1080 px, 60.000000 Hz
+    1280x800 px, 59.910000 Hz (preferred, current)
+  Position: 0,0
+  Transform: normal
+  Scale: 1.000000
+```
+
+The first line in the output above shows that HDMI-A-1 is connected. Depending of your output you need to change the second option in the command configurtions which are following.
+
+In the following example the output is simply shut off or on and no rotation is provided:
+
+```json5
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+            screenStatusCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control status HDMI-A-1",
+            screenOnCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control on HDMI-A-1",
+            screenOffCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control off HDMI-A-1"
+        }
+    }
+```
+
+In the following example the output is shut off and on but it is turned up-side down:
+
+```json5
+    {
+        module: 'MMM-Screen-Powersave-Notification',
+        config: {
+            delay: 60,
+            screenStatusCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control status HDMI-A-1",
+            screenOnCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control 180 HDMI-A-1",
+            screenOffCommand: "./modules/MMM-Screen-Powersave-Notification/controlScripts/wlr-randr_control off HDMI-A-1"
+        }
+    }
+```
+
+The supported transformation options are: normal, 90, 180, 270, flipped, flipped-90, flipped-180, flipped-270
 
 ### tvservice_control
 
