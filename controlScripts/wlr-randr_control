@@ -27,5 +27,6 @@ then
 		echo "display_power=0"
 	fi
 else
-	wlr-randr --output $port --transform $1
+	wlr-randr --output $port --transform $1 --on
+	$0 status $2
 fi
