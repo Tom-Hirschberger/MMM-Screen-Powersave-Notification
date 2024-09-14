@@ -261,3 +261,15 @@ Use the following configuration if you want to use `tvservice` command.
 | ------------------- | ------- | -------------------------------------------------------------------------------------------------- |
 | SCREENSAVE_ENABLED  | nothing | This notification is send if the module sets the display to screensave mode (or hides the modules) |
 | SCREENSAVE_DISABLED | nothing | This notification is send if the module sets the display to screensave mode (or shows the modules) |
+
+
+## Known Problems and their solutions
+
+### Screen won't stay off and gets on after a couple of seconds again
+
+If the screen does not stay off but gets on again after a couple of seconds you might have a problem with hdmi hotplug.
+User @Aergernis discoverd this problem and found a solution by forcing hdmi hotplug in file `/boot/firmware/cmdline.txt`.
+Set the value of `vc4.force_hotplug` to the following values:
+* `1`: Activate hotplug for first screen
+* `2`: Activate hotplug for the second screen
+* `3`: Activate hotplug for both screens
