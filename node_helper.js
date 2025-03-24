@@ -9,6 +9,7 @@ const spawn = require('child_process').spawn
 const spawnSync = require('child_process').spawnSync
 const fs = require('fs')
 const path = require('path')
+const Log = require("logger");
 const callbackDir = path.join(__dirname, '/callbackScripts')
 
 module.exports = NodeHelper.create({
@@ -47,8 +48,8 @@ module.exports = NodeHelper.create({
         if (spawnOutput.stderr != null){
           let error = spawnOutput.stderr.toString().trim()
           if (error != ""){
-            console.log(self.name + ': Error during screen status check: ')
-            console.log(spawnOutput.stderr.toString())
+            Log.log(self.name + ': Error during screen status check: ')
+            Log.log(spawnOutput.stderr.toString())
           }
         }
 
@@ -71,10 +72,10 @@ module.exports = NodeHelper.create({
     }
     if (self.isScreenOn()){
       if (forced === true) {
-        console.log(self.name + ': Turning screen off (forced)!')
+        Log.log(self.name + ': Turning screen off (forced)!')
         self.forcedDown = true
       } else {
-        console.log(self.name + ': Turning screen off!')
+        Log.log(self.name + ': Turning screen off!')
         self.forcedDown = false
       }
       if(self.config.hideInsteadShutoff){
@@ -86,8 +87,8 @@ module.exports = NodeHelper.create({
           if (spawnOutput.stderr != null){
             let error = spawnOutput.stderr.toString().trim()
             if (error != ""){
-              console.log(self.name + ': Error during screen off command: ')
-              console.log(spawnOutput.stderr.toString())
+              Log.log(self.name + ': Error during screen off command: ')
+              Log.log(spawnOutput.stderr.toString())
             }
           }
         }
@@ -106,7 +107,7 @@ module.exports = NodeHelper.create({
     const self = this
     if ( self.isScreenOn() === false ){
       if (forced === true) {
-        console.log(self.name + ': Turning screen on (forced)!')
+        Log.log(self.name + ': Turning screen on (forced)!')
         if(self.config.hideInsteadShutoff){
           self.sendSocketNotification("SCREEN_SHOW_MODULES")
           self.modulesHidden = false
@@ -116,8 +117,8 @@ module.exports = NodeHelper.create({
             if (spawnOutput.stderr != null){
               let error = spawnOutput.stderr.toString().trim()
               if (error != ""){
-                console.log(self.name + ': Error during screen on command: ')
-                console.log(spawnOutput.stderr.toString())
+                Log.log(self.name + ': Error during screen on command: ')
+                Log.log(spawnOutput.stderr.toString())
               }
             }
           }
@@ -127,7 +128,7 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification("SCREENSAVE_DISABLED")
       } else {
         if (self.forcedDown === false) {
-          console.log(self.name + ': Turning screen on!')
+          Log.log(self.name + ': Turning screen on!')
           if(self.config.hideInsteadShutoff){
             self.sendSocketNotification("SCREEN_SHOW_MODULES")
             self.modulesHidden = false
@@ -137,8 +138,8 @@ module.exports = NodeHelper.create({
               if (spawnOutput.stderr != null){
                 let error = spawnOutput.stderr.toString().trim()
                 if (error != ""){
-                  console.log(self.name + ': Error during screen on command: ')
-                  console.log(spawnOutput.stderr.toString())
+                  Log.log(self.name + ': Error during screen on command: ')
+                  Log.log(spawnOutput.stderr.toString())
                 }
               }
             }
@@ -146,7 +147,7 @@ module.exports = NodeHelper.create({
           self.runScriptsInDirectory(callbackDir + '/on')
           self.sendSocketNotification("SCREENSAVE_DISABLED")
         } else {
-          console.log(self.name + ': Screen is forced to be off and will not be turned on!')
+          Log.log(self.name + ': Screen is forced to be off and will not be turned on!')
         }
       }
     } else {
@@ -167,13 +168,13 @@ module.exports = NodeHelper.create({
 
   runScriptsInDirectory (directory) {
     const self = this
-    console.log(self.name + ': Running all scripts in: ' + directory)
+    Log.log(self.name + ': Running all scripts in: ' + directory)
     fs.readdir(directory, function (err, items) {
       if (err) {
-        console.log(err)
+        Log.log(err)
       } else {
         for (var i = 0; i < items.length; i++) {
-          console.log(self.name + ':   ' + items[i])
+          Log.log(self.name + ':   ' + items[i])
           let child = spawn(directory + '/' + items[i])
 
           let scriptErrorOutput = ""
@@ -186,8 +187,8 @@ module.exports = NodeHelper.create({
             scriptErrorOutput = scriptErrorOutput.trim()
 
             if (scriptErrorOutput != "") {
-              console.log(self.name + ': Error during script call: ')
-              console.log(scriptErrorOutput)
+              Log.log(self.name + ': Error during script call: ')
+              Log.log(scriptErrorOutput)
             }
           });
         }
@@ -217,10 +218,10 @@ module.exports = NodeHelper.create({
         self.turnScreenOff(false)
         self.clearAndSetScreenTimeout(false)
       }, currentDelay * 1000)
-      console.log(this.name + ': Resetted screen timeout to ' + currentDelay + ' seconds!')
+      Log.log(this.name + ': Resetted screen timeout to ' + currentDelay + ' seconds!')
       self.sendSocketNotification("SCREEN_TIMEOUT_CHANGED", {delay: currentDelay})
     } else {
-      console.log(this.name + ': Disabled screen timeout!')
+      Log.log(this.name + ': Disabled screen timeout!')
       self.sendSocketNotification("SCREEN_TIMEOUT_CHANGED", {delay: 0})
     }
   },
@@ -274,7 +275,7 @@ module.exports = NodeHelper.create({
         self.skipNextProfileChange = false
       }
     } else {
-      console.log(this.name + ': Received Notification: ' + notification)
+      Log.log(this.name + ': Received Notification: ' + notification)
     }
   }
 })
