@@ -1,6 +1,14 @@
 #!/bin/bash -l
-export WAYLAND_DISPLAY=wayland-1
+
+export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:=wayland-1}
+wlr-randr
+if [ $? -gt 0 ]
+then
+  export WAYLAND_DISPLAY=wayland-0
+fi
+
 port="HDMI-A-1"
+
 if [ "$2" != "" ]
 then
 	port=$2
@@ -20,7 +28,7 @@ then
 	$0 status $2
 elif [ "$1" == "status" ] || [ "$1" == "" ]
 then
-	if [ `wlr-randr | grep -i Enabled | grep -ic yes` -gt 0 ]
+	if [ `wlr-randr | grep -i -m 1 Enabled | grep -ic yes` -gt 0 ]
 	then
 		echo "display_power=1"
 	else
