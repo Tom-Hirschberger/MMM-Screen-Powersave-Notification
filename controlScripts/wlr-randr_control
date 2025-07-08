@@ -1,8 +1,31 @@
 #!/bin/bash -l
 
-export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:=wayland-0}
-
+command="grep -i Enabled"
 port="HDMI-A-1"
+
+function WD()
+{
+  (WAYLAND_DISPLAY="wayland-1" wlr-randr > /dev/null 2>&1)
+  
+  if [ `echo $?` -eq 0 ]
+  then
+    export WAYLAND_DISPLAY=wayland-1
+    command="grep -i Enabled"
+
+    return
+  fi
+  
+  (WAYLAND_DISPLAY="wayland-0" wlr-randr > /dev/null 2>&1)
+  
+  if [ `echo $?` -eq 0 ]
+  then
+    export WAYLAND_DISPLAY=wayland-0
+    command="grep -i -m 1 Enabled"
+  fi
+}
+
+WD
+
 
 if [ "$2" != "" ]
 then
@@ -14,22 +37,22 @@ fi
 
 if [ "$1" == "on" ]
 then
-	#normal,inverted,left,right
-	wlr-randr --output $port --on
-	$0 status $2
+  #normal,inverted,left,right
+  wlr-randr --output $port --on
+  $0 status $2
 elif [ "$1" == "off" ]
 then
-	wlr-randr --output $port --off
-	$0 status $2
+  wlr-randr --output $port --off
+  $0 status $2
 elif [ "$1" == "status" ] || [ "$1" == "" ]
 then
-	if [ `wlr-randr | grep -i -m 1 Enabled | grep -ic yes` -gt 0 ]
-	then
-		echo "display_power=1"
-	else
-		echo "display_power=0"
-	fi
+  if [ `wlr-randr | $command | grep -ic yes` -gt 0 ]
+  then
+    echo "display_power=1"
+  else
+    echo "display_power=0"
+  fi
 else
-	wlr-randr --output $port --transform $1 --on
-	$0 status $2
+  wlr-randr --output $port --transform $1 --on
+  $0 status $2
 fi
