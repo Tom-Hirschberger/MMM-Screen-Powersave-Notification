@@ -1,6 +1,5 @@
-#!/bin/bash -l
+#!/usr/bin/env -S bash -l
 
-command="grep -i Enabled"
 port="HDMI-A-1"
 
 function WD()
@@ -10,8 +9,6 @@ function WD()
   if [ `echo $?` -eq 0 ]
   then
     export WAYLAND_DISPLAY=wayland-1
-    command="grep -i Enabled"
-
     return
   fi
   
@@ -20,7 +17,6 @@ function WD()
   if [ `echo $?` -eq 0 ]
   then
     export WAYLAND_DISPLAY=wayland-0
-    command="grep -i -m 1 Enabled"
   fi
 }
 
@@ -46,7 +42,7 @@ then
   $0 status $2
 elif [ "$1" == "status" ] || [ "$1" == "" ]
 then
-  if [ `wlr-randr | $command | grep -ic yes` -gt 0 ]
+  if [ `wlr-randr | grep -A 4 -i $port | grep -i Enabled | grep -ic yes` -gt 0 ]
   then
     echo "display_power=1"
   else
